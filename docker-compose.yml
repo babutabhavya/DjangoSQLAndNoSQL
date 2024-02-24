@@ -1,12 +1,33 @@
 version: '3.8'
 
 services:
-  web:
+  django:
     build: .
-    command: pipenv run python ./multipledatabases/manage.py runserver 0.0.0.0:8000
+    command:
+      - sh
+      - -c
+      - "pipenv run python ./multipledatabases/manage.py migrate && pipenv run python ./multipledatabases/manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/project/
     ports:
       - 8000:8000
     env_file:
       - ./.env.dev
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: poc
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    ports:
+      - 3306:3306
+    volumes:
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

@@ -79,11 +79,11 @@ WSGI_APPLICATION = "multipledatabases.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "poc",
-        "PASSWORD": "",
-        "USER": "root",
-        "HOST": "localhost",
-        "PORT": "3306",
+        "NAME": os.getenv("MYSQL_DB_NAME"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD"),
+        "USER": os.getenv("MYSQL_USER"),
+        "HOST": os.getenv("MYSQL_HOST"),
+        "PORT": os.getenv("MYSQL_PORT"),
     },
     "mongodb": {
         "ENGINE": "djongo",

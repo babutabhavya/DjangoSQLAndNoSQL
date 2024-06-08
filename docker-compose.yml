@@ -1,33 +1,45 @@
-version: '3.8'
-
 services:
-  django:
-    build: .
-    command:
-      - sh
-      - -c
-      - "pipenv run python ./multipledatabases/manage.py migrate && pipenv run python ./multipledatabases/manage.py runserver 0.0.0.0:8000"
+  mongo:
+    image: mongo
+    expose:
+      - 3306
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=poc-prodrducts
     volumes:
-      - ./:/project/
-    ports:
-      - 8000:8000
-    env_file:
-      - ./.env.dev
-    depends_on:
-      - mysql
+      - mongo_data:/var/lib/mysql
 
   mysql:
     image: mysql:latest
     environment:
       MYSQL_DATABASE: poc
-      MYSQL_USER: root
       MYSQL_PASSWORD:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
-    ports:
-      - 3306:3306
+    expose:
+      - 3306
     volumes:
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
       - mysql_data:/var/lib/mysql
+    depends_on:
+      - mongo
+
+  django:
+    build: .
+    command:
+      - sh
+      - -c
+      - "make makemigrations && make migrate && make initadmin && make start"
+    volumes:
+      - ./:/project/
+    restart: always
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo
+      - mysql
 
 volumes:
+  mongo_data:
   mysql_data:

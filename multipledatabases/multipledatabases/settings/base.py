@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,13 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-a$)w%#56ekzttx8*$!1*q-iypdazummf2)l52^$&6eurk+2c%v"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "categories",
     "products",
+    "management",
 ]
 
 MIDDLEWARE = [
@@ -87,7 +88,12 @@ DATABASES = {
     },
     "mongodb": {
         "ENGINE": "djongo",
-        "NAME": "poc-prodrducts",
+        "NAME": os.getenv("MONGO_INITDB_ROOT_PASSWORD"),
+        "CLIENT": {
+            "host": "mongo",
+            "username": os.getenv("MONGO_INITDB_ROOT_USERNAME"),
+            "password": os.getenv("MONGO_INITDB_ROOT_PASSWORD"),
+        },
     },
 }
 

@@ -17,5 +17,8 @@ done
 
 echo "Mongo started"
 
+pipenv run python ./multipledatabases/manage.py makemigrations
+pipenv run python ./multipledatabases/manage.py migrate
+pipenv run python ./multipledatabases/manage.py initadmin
 
 exec "$@"

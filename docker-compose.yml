@@ -28,7 +28,7 @@ services:
     command:
       - sh
       - -c
-      - "make makemigrations && make migrate && make initadmin && make start"
+      - "pipenv run python ./multipledatabases/manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/project/
     restart: always
